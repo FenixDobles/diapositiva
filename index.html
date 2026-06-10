@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lectura y Escritura en Primer Grado - UDEP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CONFIGURACIÓN GENERAL */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #334155; /* Fondo oscuro detrás de las diapositivas */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Lato', sans-serif;
+        }
+
+        /* 2. CONTENEDOR DE LA PRESENTACIÓN */
+        #presentation-container {
+            position: relative;
+            width: 1280px;
+            max-width: 95vw;
+            height: 720px;
+            max-height: 85vh;
+            background-color: #fdfbf7;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        /* 3. ESTILOS DE LAS DIAPOSITIVAS */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            pointer-events: none;
+            transform: translateX(20px);
+            background-color: #fdfbf7;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        /* Fondos Decorativos (Blobs) */
+        .slide::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(203, 160, 82, 0.12) 0%, rgba(203, 160, 82, 0) 70%);
+            top: -150px; right: -150px;
+            border-radius: 50%; pointer-events: none; z-index: 0;
+        }
+        
+        .slide::after {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(15, 61, 97, 0.06) 0%, rgba(15, 61, 97, 0) 70%);
+            bottom: -250px; left: -250px;
+            border-radius: 50%; pointer-events: none; z-index: 0;
+        }
+
+        .slide > * { position: relative; z-index: 1; width: 100%; }
+
+        /* 4. TIPOGRAFÍA Y TEXTOS */
+        h1, h2, h3, .number, .number-label {
+            color: #0f3d61;
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+        }
+
+        p, li { color: #334155; margin-bottom: 15px; font-size: 20px; line-height: 1.6; }
+        h1 { font-size: 60px; line-height: 1.2; margin-bottom: 20px; text-align: center; }
+        .slide-title { font-size: 40px; margin-bottom: 40px; text-align: left; }
+        h3 { font-size: 32px; margin-bottom: 15px; }
+
+        .content-area {
+            display: flex; flex-direction: column; flex-grow: 1; justify-content: center;
+        }
+
+        /* 5. DISEÑOS (LAYOUTS) */
+        .two-column {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;
+        }
+
+        .two-column.tiled { align-items: stretch; }
+        .two-column.tiled > div {
+            background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
+            padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .image-wrapper {
+            border-radius: 12px; height: 400px; overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            background-color: #e2e8f0; /* Placeholder color */
+            display: flex; align-items: center; justify-content: center;
+        }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .bullet-list ul { list-style: none; }
+        .bullet-list li { padding-left: 45px; position: relative; margin-bottom: 25px; }
+        .bullet-list i {
+            color: #cba052; font-size: 24px; position: absolute; left: 0; top: 4px;
+        }
+        .bullet-list strong { color: #0f3d61; }
+
+        /* Títulos de Sección */
+        .section-title-layout { text-align: center; }
+        .section-title-layout hr, .title-layout hr {
+            background-color: #cba052; border: none; height: 4px; margin: 30px auto; width: 150px;
+        }
+
+        /* Layout con 3 tarjetas */
+        .tiled-content { display: flex; gap: 30px; justify-content: center; }
+        .tile {
+            background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
+            flex: 1; padding: 40px 30px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .tile .icon { color: #cba052; font-size: 48px; margin-bottom: 25px; }
+
+        /* 6. CONTROLES DE NAVEGACIÓN */
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+
+        #controls button {
+            background-color: #cba052;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Lato', sans-serif;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #controls button:hover { background-color: #b58b40; }
+        #controls button:disabled { background-color: #64748b; cursor: not-allowed; }
+        #slide-counter { font-size: 18px; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div id="presentation-container">
+        
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <div class="title-layout" style="text-align: center;">
+                <h1>Lectoescritura en<br>Primer Grado</h1>
+                <hr>
+                <p style="font-size: 24px; color: #475569;">Didáctica del Lenguaje I<br><strong>Universidad de Piura</strong></p>
+                <p style="margin-top: 40px; color: #64748b;">Leandro Encalada Morales</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="slide-title">Datos de la Actividad</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="bullet-list">
+                        <ul>
+                            <li><i class="fa-solid fa-graduation-cap"></i><strong>Grado:</strong> 1ro de Primaria.</li>
+                            <li><i class="fa-solid fa-book-open"></i><strong>Texto Real:</strong> Manual instructivo (Manual de Plancha a vapor IMACO).</li>
+                            <li><i class="fa-solid fa-chalkboard-user"></i><strong>Materiales:</strong> Caja del electrodoméstico, manual original, proyección de manual y hojas formato de manual.</li>
+                            <li><i class="fa-solid fa-bullseye"></i><strong>Objetivo Central:</strong> Interrogación y producción de un texto auténtico para la vida cotidiana.</li>
+                        </ul>
+                    </div>
+                    <div class="image-wrapper">
+                        <img src="https://i.ytimg.com/vi/HDXeUhf_eqc/maxresdefault.jpg" alt="[Imagen de Clase]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="slide-title">Motivación</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="image-wrapper" style="border-radius: 50%; width: 400px; height: 400px; margin: auto;">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ58tqYqBdq7XrR1rCp14fjf0iwGQOIXK5kXQ&s" alt="[Imagen de Caja Misteriosalol]">
+                    </div>
+                    <div>
+                        <h3>El Gancho: Un Objeto Real</h3>
+                        <p>El docente ingresa al aula trayendo una caja de un electrodoméstico (plancha):</p>
+                        <p style="font-style: italic; color: #475569;">"Chicos, miren lo que acaba de llegar... una plancha. Antes de conectarla, encontré este pequeño librito adentro. Necesito que descubramos qué dice aquí, porque una
+plancha calienta mucho y usarla mal puede ser muy peligroso".</p>
+                        <p>El maestro se posiciona como mediador para resolver un problema auténtico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      <!-- Diapositiva 4 -->
+        <div class="slide">
+            <div class="section-title-layout">
+                <h2>Interrogación del Texto</h2>
+                <hr>
+                <p style="font-size: 28px;">Análisis a través de los 7 Niveles</p>
+                <p style="max-width: 800px; margin-top: 20px; color: #475569;">Se proyecta el manual en la pizarra. Los niños elaboran hipótesis a partir de indicios <strong>no verbales, tipográficos y paratextuales</strong> guiados de cerca por el docente.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5: Niveles 1 al 3 -->
+        <div class="slide">
+            <h2 class="slide-title">Pragmática y Globalidad</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="badge">1</div>
+                        <h3 style="font-size: 24px;">Contexto</h3>
+                        <p>¿Dónde encontramos este manual? ¿Estaba en la biblioteca o dentro de la caja del producto?</p>
+                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Se explora el origen real y la función de por qué la fábrica lo colocó allí.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="badge">2</div>
+                        <h3 style="font-size: 24px;">Parámetros</h3>
+                        <p>¿Quién mandó a hacer este instructivo y para quiénes?</p>
+                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Reconocimiento visual de logos (IMACO) y deducción del destinatario (el usuario en casa).</p>
+                    </div>
+                    <div class="tile">
+                        <div class="badge">3</div>
+                        <h3 style="font-size: 24px;">Superestructura</h3>
+                        <p>Análisis de la silueta global. ¿Se parece a los cuentos que solemos leer?</p>
+                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Notan que tiene fotos, palabras mayúsculas grandes y un formato distinto al narrativo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6: Niveles 4 al 7 -->
+       <div class="slide">
+            <h2 class="slide-title">Estructura y Detalles</h2>
+            <div class="content-area">
+                <!-- gap y padding reducidos ligeramente para acomodar 4 columnas sin apretarlas -->
+                <div class="tiled-content" style="gap: 20px;">
+                    <div class="tile" style="padding: 35px 20px;">
+                        <div class="badge">4</div>
+                        <h3 style="font-size: 20px;">Macroestructura</h3>
+                        <p style="font-size: 16px;">¿De qué creen que trate? ¿Qué nos indicarán esas palabras grandes?</p>
+                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Deducción del tema central guiada por la silueta.</p>
+                    </div>
+                    <div class="tile" style="padding: 35px 20px;">
+                        <div class="badge">5</div>
+                        <h3 style="font-size: 20px;">Ling. Textual</h3>
+                        <p style="font-size: 16px;">¿Por qué el autor puso las ideas en lista y no de corrido?</p>
+                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Se deduce el uso de viñetas para mantener el orden.</p>
+                    </div>
+                    <div class="tile" style="padding: 35px 20px;">
+                        <div class="badge">6</div>
+                        <h3 style="font-size: 20px;">Ling. Oracional</h3>
+                        <p style="font-size: 16px;">"Nunca deje que el cable cuelgue de la mesa".</p>
+                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Lectura en voz alta de una precaución con sentido completo.</p>
+                    </div>
+                    <div class="tile" style="padding: 35px 20px;">
+                        <div class="badge">7</div>
+                        <h3 style="font-size: 20px;">Microestructuras</h3>
+                        <p style="font-size: 16px;">¿Dónde dice "cable" o "plancha" en el texto?</p>
+                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Búsqueda de letras conocidas guiada por los dibujos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <div class="section-title-layout">
+                <h2>Producción de texto</h2>
+                <hr>
+                <p style="font-size: 28px;">Creación del Manual Propio</p>
+                <p style="max-width: 800px; margin-top: 20px; color: #475569;">"Ahora que ya sabemos los cuidados, vamos a crear nuestro propio manual instructivo. Así, todos sabrán cómo usar una plancha de forma segura".</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="slide-title">Escritura de Listas</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="icon"><i class="fa-solid fa-list-check"></i></div>
+                        <h3>El Reto Práctico</h3>
+                        <p>Los niños reciben hojas dobladas (simulando un manual). En la primera página, dibujan y escriben una lista vertical de materiales.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="icon"><i class="fa-solid fa-brain"></i></div>
+                        <h3>El Propósito</h3>
+                        <p>Al hacer listas, se libera al niño de la presión de armar oraciones completas, enfocando toda su atención cognitiva en cuáles letras usar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="slide-title">Escritura Autónoma</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="bullet-list">
+                        <ul>
+                            <li><i class="fa-solid fa-pencil"></i><strong>Escritura libre:</strong> Redactan advertencias cortas (ej. "PELIGRO", "QUEMA").</li>
+                            <li><i class="fa-solid fa-people-arrows"></i><strong>Rol Mediador:</strong> El docente recorre las mesas sin usar lapicero rojo.</li>
+                            <li><i class="fa-solid fa-triangle-exclamation"></i><strong>Respeto al proceso:</strong> Se acepta que usarán pseudo-letras o grafías incompletas (Ej. "Q M" en vez de "quema").</li>
+                            <li><i class="fa-solid fa-puzzle-piece"></i><strong>Conflicto Cognitivo:</strong> El maestro interviene: <em>"¿Seguro que con dos letras ya dice 'quema'?"</em> para empujarlos al nivel alfabético.</li>
+                        </ul>
+                    </div>
+                    <div class="image-wrapper">
+                        <img src="https://media.gettyimages.com/id/129276827/video/macro-shot.jpg?s=640x640&k=20&c=tsNyxgxj_uSMOk9_2l5cRAZI8eg1fJQO5pep8i1kbnI=" alt="[Imagen de Escritura]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <div class="section-title-layout">
+                <h2 style="font-size: 80px;">Gracias por su atención</h2>
+                <hr>
+                <p style="font-size: 26px;"></p>
+                <p style="margin-top: 40px; color: #64748b; font-size: 22px;"><strong>Leandro Encalada Morales</strong></p>
+                <p style="color: #64748b; font-size: 18px;">Asignatura: Didáctica del Lenguaje I</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controles -->
+    <div id="controls">
+        <button id="btn-prev" onclick="prevSlide()" disabled><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+        <span id="slide-counter">1 / 10</span>
+        <button id="btn-next" onclick="nextSlide()">Siguiente <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        // Lógica de navegación en JavaScript
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const counter = document.getElementById('slide-counter');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function updateSlides() {
+            // Actualizar clases de las diapositivas
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Actualizar el contador
+            counter.innerText = `${currentSlideIndex + 1} / ${slides.length}`;
+
+            // Habilitar/deshabilitar botones
+            btnPrev.disabled = currentSlideIndex === 0;
+            btnNext.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlides();
+            }
+        }
+
+        // Permitir navegación con las flechas del teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Inicializar
+        updateSlides();
+    </script>
+</body>
+</html>
+```
