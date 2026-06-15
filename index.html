@@ -3,415 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lectura y Escritura en Primer Grado - UDEP</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Microclase Dinámica: Juan Luis Vives</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Íconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* 1. CONFIGURACIÓN GENERAL */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background-color: #334155; /* Fondo oscuro detrás de las diapositivas */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Lato', sans-serif;
+        /* Fondo animado */
+        .bg-animated {
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #334155);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* 2. CONTENEDOR DE LA PRESENTACIÓN */
-        #presentation-container {
+        /* Contenedor de diapositivas relativo para apilarlas */
+        #slide-container {
             position: relative;
-            width: 1280px;
-            max-width: 95vw;
-            height: 720px;
-            max-height: 85vh;
-            background-color: #fdfbf7;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
         }
 
-        /* 3. ESTILOS DE LAS DIAPOSITIVAS */
+        /* Transiciones de las Diapositivas */
         .slide {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; right: 0; bottom: 0;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 60px;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             pointer-events: none;
-            transform: translateX(20px);
-            background-color: #fdfbf7;
+            transform: translateX(40px) scale(0.95);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
         .slide.active {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
             z-index: 10;
         }
+        .slide.previous {
+            transform: translateX(-40px) scale(0.95);
+        }
 
-        /* Fondos Decorativos (Blobs) */
-        .slide::before {
-            content: '';
-            position: absolute;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(203, 160, 82, 0.12) 0%, rgba(203, 160, 82, 0) 70%);
-            top: -150px; right: -150px;
-            border-radius: 50%; pointer-events: none; z-index: 0;
+        /* Animaciones en cascada para los elementos internos (Staggering) */
+        .slide .animate-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-out;
         }
         
-        .slide::after {
-            content: '';
-            position: absolute;
-            width: 800px; height: 800px;
-            background: radial-gradient(circle, rgba(15, 61, 97, 0.06) 0%, rgba(15, 61, 97, 0) 70%);
-            bottom: -250px; left: -250px;
-            border-radius: 50%; pointer-events: none; z-index: 0;
+        .slide.active .animate-item {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .slide > * { position: relative; z-index: 1; width: 100%; }
+        /* Retrasos escalonados */
+        .slide.active .delay-1 { transition-delay: 0.1s; }
+        .slide.active .delay-2 { transition-delay: 0.3s; }
+        .slide.active .delay-3 { transition-delay: 0.4s; }
+        .slide.active .delay-4 { transition-delay: 0.5s; }
+        .slide.active .delay-5 { transition-delay: 0.6s; }
+        .slide.active .delay-6 { transition-delay: 0.7s; }
 
-        /* 4. TIPOGRAFÍA Y TEXTOS */
-        h1, h2, h3, .number, .number-label {
-            color: #0f3d61;
-            font-family: 'Merriweather', serif;
-            font-weight: 700;
+        /* Efecto de pulso continuo */
+        .pulse-slow {
+            animation: pulse-shadow 2s infinite;
         }
-
-        p, li { color: #334155; margin-bottom: 15px; font-size: 20px; line-height: 1.6; }
-        h1 { font-size: 60px; line-height: 1.2; margin-bottom: 20px; text-align: center; }
-        .slide-title { font-size: 40px; margin-bottom: 40px; text-align: left; }
-        h3 { font-size: 32px; margin-bottom: 15px; }
-
-        .content-area {
-            display: flex; flex-direction: column; flex-grow: 1; justify-content: center;
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
-
-        /* 5. DISEÑOS (LAYOUTS) */
-        .two-column {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;
-        }
-
-        .two-column.tiled { align-items: stretch; }
-        .two-column.tiled > div {
-            background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
-            padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .image-wrapper {
-            border-radius: 12px; height: 400px; overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            background-color: #e2e8f0; /* Placeholder color */
-            display: flex; align-items: center; justify-content: center;
-        }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-
-        .bullet-list ul { list-style: none; }
-        .bullet-list li { padding-left: 45px; position: relative; margin-bottom: 25px; }
-        .bullet-list i {
-            color: #cba052; font-size: 24px; position: absolute; left: 0; top: 4px;
-        }
-        .bullet-list strong { color: #0f3d61; }
-
-        /* Títulos de Sección */
-        .section-title-layout { text-align: center; }
-        .section-title-layout hr, .title-layout hr {
-            background-color: #cba052; border: none; height: 4px; margin: 30px auto; width: 150px;
-        }
-
-        /* Layout con 3 tarjetas */
-        .tiled-content { display: flex; gap: 30px; justify-content: center; }
-        .tile {
-            background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
-            flex: 1; padding: 40px 30px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .tile .icon { color: #cba052; font-size: 48px; margin-bottom: 25px; }
-
-        /* 6. CONTROLES DE NAVEGACIÓN */
-        #controls {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: white;
-        }
-
-        #controls button {
-            background-color: #cba052;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Lato', sans-serif;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        #controls button:hover { background-color: #b58b40; }
-        #controls button:disabled { background-color: #64748b; cursor: not-allowed; }
-        #slide-counter { font-size: 18px; font-weight: bold; }
-
     </style>
 </head>
-<body>
+<body class="bg-animated min-h-screen flex items-center justify-center p-4 md:p-8 font-sans">
 
-    <div id="presentation-container">
+    <!-- Presentación -->
+    <div class="bg-slate-50 w-full max-w-6xl h-[650px] rounded-2xl shadow-2xl relative flex flex-col overflow-hidden transition-all">
         
-        <!-- Diapositiva 1 -->
-        <div class="slide active">
-            <div class="title-layout" style="text-align: center;">
-                <h1>Lectoescritura en<br>Primer Grado</h1>
-                <hr>
-                <p style="font-size: 24px; color: #475569;">Didáctica del Lenguaje I<br><strong>Universidad de Piura</strong></p>
-                <p style="margin-top: 40px; color: #64748b;">Leandro Encalada Morales</p>
-            </div>
+        <!-- Barra de Progreso -->
+        <div class="h-2 w-full bg-slate-200">
+            <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(37,99,235,0.8)]" style="width: 16.66%;"></div>
         </div>
 
-        <!-- Diapositiva 2 -->
-        <div class="slide">
-            <h2 class="slide-title">Datos de la Actividad</h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="bullet-list">
-                        <ul>
-                            <li><i class="fa-solid fa-graduation-cap"></i><strong>Grado:</strong> 1ro de Primaria.</li>
-                            <li><i class="fa-solid fa-book-open"></i><strong>Texto Real:</strong> Manual instructivo (Manual de Plancha a vapor IMACO).</li>
-                            <li><i class="fa-solid fa-chalkboard-user"></i><strong>Materiales:</strong> Caja del electrodoméstico, manual original, proyección de manual y hojas formato de manual.</li>
-                            <li><i class="fa-solid fa-bullseye"></i><strong>Objetivo Central:</strong> Interrogación y producción de un texto auténtico para la vida cotidiana.</li>
+        <!-- Área de las Diapositivas -->
+        <div id="slide-container" class="flex-grow p-10 md:p-16">
+            
+            <!-- DIAPOSITIVA 1: Portada -->
+            <div class="slide flex-col items-center justify-center text-center active" id="slide-0">
+                <div class="animate-item delay-1 w-48 h-60 md:w-56 md:h-72 bg-slate-200 border-4 border-slate-400 rounded-xl shadow-xl flex items-center justify-center overflow-hidden mb-6 transform hover:scale-105 transition-transform">
+                    <img src="data:image/jpeg;base64,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" alt="[Retrato de Juan Luis Vives]" class="w-full h-full object-cover object-top" />
+                </div>
+                <h1 class="animate-item delay-2 text-4xl md:text-6xl font-bold text-slate-800 leading-tight mb-4">
+                    Juan Luis Vives y la educación <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">centrada en el estudiante</span>
+                </h1>
+                <div class="animate-item delay-3 w-32 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mx-auto my-6"></div>
+                <h2 class="animate-item delay-4 text-2xl text-slate-600 font-light flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="mr-3 w-8 h-8 text-indigo-500"></i>
+                    Microclase de Historia de la Educación
+                </h2>
+            </div>
+
+            <!-- DIAPOSITIVA 2: Planteamiento (DINÁMICA) -->
+            <div class="slide flex-col items-center justify-center" id="slide-1">
+                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-8 uppercase tracking-wide text-blue-600">Experimento Sensorial</h2>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-6 md:space-y-0 w-full mb-8">
+                    <!-- Observar (Imagen) -->
+                    <div class="animate-item delay-3 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
+                        <span class="text-lg font-bold text-slate-500 mb-4">1. Observar</span>
+                        <div class="bg-indigo-50 p-4 rounded-full mb-2">
+                                              <img src="data:image/png;base64,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" />  
+                        </div>
+                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Observar atentamente..."</p>
+                    </div>
+
+                    
+                    <!-- Escuchar (Palabras) -->
+                    <div class="animate-item delay-3 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
+                        <span class="text-lg font-bold text-slate-500 mb-4">2. Escuchar</span>
+                        <div class="bg-indigo-50 p-4 rounded-full mb-2">
+                            <i data-lucide="ear" class="text-indigo-600 w-12 h-12"></i>
+                        </div>
+                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Atentos a las 5 palabras..."</p>
+                    </div>
+
+                    <!-- Experimentar (Tocar) -->
+                    <div class="animate-item delay-4 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
+                        <span class="text-lg font-bold text-slate-500 mb-4">3. Experimentar</span>
+                        <div class="bg-amber-50 p-4 rounded-full mb-2">
+                            <i data-lucide="hand" class="text-amber-600 w-12 h-12"></i>
+                        </div>
+                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Analizando el objeto físico"</p>
+                    </div>
+                </div>
+
+                <div class="animate-item delay-5 mt-2 p-4 bg-slate-800 rounded-xl border border-slate-700 max-w-4xl text-center shadow-lg">
+                    <p class="text-xl font-medium text-white flex items-center justify-center">
+                        <i data-lucide="lightbulb" class="mr-3 text-yellow-400"></i>
+                        Aunque todos recibimos la misma información, cada persona aprende y recuerda de manera diferente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- DIAPOSITIVA 3: Quiebre Histórico -->
+            <div class="slide flex-col justify-center" id="slide-2">
+                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-10">Una Evolución, No un Divorcio</h2>
+                
+                <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8 h-[350px]">
+                    <!-- Columna Izquierda -->
+                    <div class="animate-item delay-2 flex-1 bg-gradient-to-b from-slate-100 to-white border-t-8 border-slate-400 rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+                        <div class="flex items-center justify-center mb-6 border-b border-slate-200 pb-4">
+                            <i data-lucide="landmark" class="text-slate-500 w-8 h-8 mr-3"></i>
+                            <h3 class="text-2xl font-bold text-slate-700">Lo que se hacía (Escuela)</h3>
+                        </div>
+                        <ul class="space-y-4 text-lg text-slate-700">
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="book" class="text-slate-400 mr-3"></i> El Trívium (Gramática, Lógica, Retórica)</li>
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="swords" class="text-slate-400 mr-3"></i> Análisis y confrontaciones (debates)</li>
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="gavel" class="text-slate-400 mr-3"></i> Fuerte autoridad impositiva del maestro</li>
                         </ul>
                     </div>
-                    <div class="image-wrapper">
-                        <img src="https://i.ytimg.com/vi/HDXeUhf_eqc/maxresdefault.jpg" alt="[Imagen de Clase]">
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Diapositiva 3 -->
-        <div class="slide">
-            <h2 class="slide-title">Motivación</h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="image-wrapper" style="border-radius: 50%; width: 400px; height: 400px; margin: auto;">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ58tqYqBdq7XrR1rCp14fjf0iwGQOIXK5kXQ&s" alt="[Imagen de Caja Misteriosalol]">
+                    <!-- Divisor -->
+                    <div class="hidden md:flex flex-col items-center justify-center animate-item delay-3">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i data-lucide="plus" class="text-blue-600 w-8 h-8"></i>
+                        </div>
                     </div>
-                    <div>
-                        <h3>El Gancho: Un Objeto Real</h3>
-                        <p>El docente ingresa al aula trayendo una caja de un electrodoméstico (plancha):</p>
-                        <p style="font-style: italic; color: #475569;">"Chicos, miren lo que acaba de llegar... una plancha. Antes de conectarla, encontré este pequeño librito adentro. Necesito que descubramos qué dice aquí, porque una
-plancha calienta mucho y usarla mal puede ser muy peligroso".</p>
-                        <p>El maestro se posiciona como mediador para resolver un problema auténtico.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-      <!-- Diapositiva 4 -->
-        <div class="slide">
-            <div class="section-title-layout">
-                <h2>Interrogación del Texto</h2>
-                <hr>
-                <p style="font-size: 28px;">Análisis a través de los 7 Niveles</p>
-                <p style="max-width: 800px; margin-top: 20px; color: #475569;">Se proyecta el manual en la pizarra. Los niños elaboran hipótesis a partir de indicios <strong>no verbales, tipográficos y paratextuales</strong> guiados de cerca por el docente.</p>
-            </div>
-        </div>
-
-        <!-- Diapositiva 5: Niveles 1 al 3 -->
-        <div class="slide">
-            <h2 class="slide-title">Pragmática y Globalidad</h2>
-            <div class="content-area">
-                <div class="tiled-content">
-                    <div class="tile">
-                        <div class="badge">1</div>
-                        <h3 style="font-size: 24px;">Contexto</h3>
-                        <p>¿Dónde encontramos este manual? ¿Estaba en la biblioteca o dentro de la caja del producto?</p>
-                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Se explora el origen real y la función de por qué la fábrica lo colocó allí.</p>
-                    </div>
-                    <div class="tile">
-                        <div class="badge">2</div>
-                        <h3 style="font-size: 24px;">Parámetros</h3>
-                        <p>¿Quién mandó a hacer este instructivo y para quiénes?</p>
-                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Reconocimiento visual de logos (IMACO) y deducción del destinatario (el usuario en casa).</p>
-                    </div>
-                    <div class="tile">
-                        <div class="badge">3</div>
-                        <h3 style="font-size: 24px;">Superestructura</h3>
-                        <p>Análisis de la silueta global. ¿Se parece a los cuentos que solemos leer?</p>
-                        <p style="font-size: 16px; color: #64748b; margin-top: auto;">Notan que tiene fotos, palabras mayúsculas grandes y un formato distinto al narrativo.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 6: Niveles 4 al 7 -->
-       <div class="slide">
-            <h2 class="slide-title">Estructura y Detalles</h2>
-            <div class="content-area">
-                <!-- gap y padding reducidos ligeramente para acomodar 4 columnas sin apretarlas -->
-                <div class="tiled-content" style="gap: 20px;">
-                    <div class="tile" style="padding: 35px 20px;">
-                        <div class="badge">4</div>
-                        <h3 style="font-size: 20px;">Macroestructura</h3>
-                        <p style="font-size: 16px;">¿De qué creen que trate? ¿Qué nos indicarán esas palabras grandes?</p>
-                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Deducción del tema central guiada por la silueta.</p>
-                    </div>
-                    <div class="tile" style="padding: 35px 20px;">
-                        <div class="badge">5</div>
-                        <h3 style="font-size: 20px;">Ling. Textual</h3>
-                        <p style="font-size: 16px;">¿Por qué el autor puso las ideas en lista y no de corrido?</p>
-                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Se deduce el uso de viñetas para mantener el orden.</p>
-                    </div>
-                    <div class="tile" style="padding: 35px 20px;">
-                        <div class="badge">6</div>
-                        <h3 style="font-size: 20px;">Ling. Oracional</h3>
-                        <p style="font-size: 16px;">"Nunca deje que el cable cuelgue de la mesa".</p>
-                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Lectura en voz alta de una precaución con sentido completo.</p>
-                    </div>
-                    <div class="tile" style="padding: 35px 20px;">
-                        <div class="badge">7</div>
-                        <h3 style="font-size: 20px;">Microestructuras</h3>
-                        <p style="font-size: 16px;">¿Dónde dice "cable" o "plancha" en el texto?</p>
-                        <p style="font-size: 14px; color: #64748b; margin-top: auto;">Búsqueda de letras conocidas guiada por los dibujos.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Diapositiva 7 -->
-        <div class="slide">
-            <div class="section-title-layout">
-                <h2>Producción de texto</h2>
-                <hr>
-                <p style="font-size: 28px;">Creación del Manual Propio</p>
-                <p style="max-width: 800px; margin-top: 20px; color: #475569;">"Ahora que ya sabemos los cuidados, vamos a crear nuestro propio manual instructivo. Así, todos sabrán cómo usar una plancha de forma segura".</p>
-            </div>
-        </div>
-
-        <!-- Diapositiva 8 -->
-        <div class="slide">
-            <h2 class="slide-title">Escritura de Listas</h2>
-            <div class="content-area">
-                <div class="tiled-content">
-                    <div class="tile">
-                        <div class="icon"><i class="fa-solid fa-list-check"></i></div>
-                        <h3>El Reto Práctico</h3>
-                        <p>Los niños reciben hojas dobladas (simulando un manual). En la primera página, dibujan y escriben una lista vertical de materiales.</p>
-                    </div>
-                    <div class="tile">
-                        <div class="icon"><i class="fa-solid fa-brain"></i></div>
-                        <h3>El Propósito</h3>
-                        <p>Al hacer listas, se libera al niño de la presión de armar oraciones completas, enfocando toda su atención cognitiva en cuáles letras usar.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 9 -->
-        <div class="slide">
-            <h2 class="slide-title">Escritura Autónoma</h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="bullet-list">
-                        <ul>
-                            <li><i class="fa-solid fa-pencil"></i><strong>Escritura libre:</strong> Redactan advertencias cortas (ej. "PELIGRO", "QUEMA").</li>
-                            <li><i class="fa-solid fa-people-arrows"></i><strong>Rol Mediador:</strong> El docente recorre las mesas sin usar lapicero rojo.</li>
-                            <li><i class="fa-solid fa-triangle-exclamation"></i><strong>Respeto al proceso:</strong> Se acepta que usarán pseudo-letras o grafías incompletas (Ej. "Q M" en vez de "quema").</li>
-                            <li><i class="fa-solid fa-puzzle-piece"></i><strong>Conflicto Cognitivo:</strong> El maestro interviene: <em>"¿Seguro que con dos letras ya dice 'quema'?"</em> para empujarlos al nivel alfabético.</li>
+                    <!-- Columna Derecha -->
+                    <div class="animate-item delay-4 flex-1 bg-gradient-to-b from-sky-50 to-white border-t-8 border-sky-500 rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+                        <div class="flex items-center justify-center mb-6 border-b border-sky-200 pb-4">
+                            <i data-lucide="lightbulb" class="text-sky-500 w-8 h-8 mr-3"></i>
+                            <h3 class="text-2xl font-bold text-sky-800">Lo que insertó Vives</h3>
+                        </div>
+                        <ul class="space-y-4 text-lg text-sky-900">
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="heart" class="text-sky-500 mr-3"></i> Intereses y características del estudiante</li>
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="compass" class="text-sky-500 mr-3"></i> Maestro como guía (autoridad moderada)</li>
+                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="users" class="text-sky-500 mr-3"></i> Adaptación a los diferentes "Ingenios"</li>
                         </ul>
                     </div>
-                    <div class="image-wrapper">
-                        <img src="https://media.gettyimages.com/id/129276827/video/macro-shot.jpg?s=640x640&k=20&c=tsNyxgxj_uSMOk9_2l5cRAZI8eg1fJQO5pep8i1kbnI=" alt="[Imagen de Escritura]">
+                </div>
+            </div>
+
+            <!-- DIAPOSITIVA 4: Pilares -->
+            <div class="slide flex-col justify-center" id="slide-3">
+                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-10">Los 4 Pilares de los <span class="text-indigo-600 bg-indigo-50 px-4 py-1 rounded-lg">"Ingenios"</span></h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
+                    <!-- Pilar 1 -->
+                    <div class="animate-item delay-2 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-300 transition-all cursor-default h-full">
+                        <div class="bg-blue-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
+                            <i data-lucide="search" class="text-blue-600 w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl text-slate-800 font-bold mb-1">Observación sistemática</h4>
+                            <p class="text-slate-500 text-md leading-tight">Analizar las características del aula antes de impartir el conocimiento.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 2 -->
+                    <div class="animate-item delay-3 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all cursor-default h-full">
+                        <div class="bg-emerald-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
+                            <i data-lucide="brain" class="text-emerald-600 w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl text-slate-800 font-bold mb-1">Maestro investigador</h4>
+                            <p class="text-slate-500 text-md leading-tight">Evaluar en conjunto las capacidades de los niños; un descubridor de mentes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 3 -->
+                    <div class="animate-item delay-4 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-purple-300 transition-all cursor-default h-full">
+                        <div class="bg-purple-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
+                            <i data-lucide="puzzle" class="text-purple-600 w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl text-slate-800 font-bold mb-1">Adaptación educativa</h4>
+                            <p class="text-slate-500 text-md leading-tight">Acomodar el método a los intereses del estudiante, evitando la rigidez.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pilar 4 -->
+                    <div class="animate-item delay-5 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-amber-300 transition-all cursor-default h-full">
+                        <div class="bg-amber-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
+                            <i data-lucide="clock" class="text-amber-600 w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl text-slate-800 font-bold mb-1">Paciencia diagnóstica</h4>
+                            <p class="text-slate-500 text-md leading-tight">Respetar los tiempos de maduración de cada niño sin desesperarse.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Diapositiva 10 -->
-        <div class="slide">
-            <div class="section-title-layout">
-                <h2 style="font-size: 80px;">Gracias por su atención</h2>
-                <hr>
-                <p style="font-size: 26px;"></p>
-                <p style="margin-top: 40px; color: #64748b; font-size: 22px;"><strong>Leandro Encalada Morales</strong></p>
-                <p style="color: #64748b; font-size: 18px;">Asignatura: Didáctica del Lenguaje I</p>
+            <!-- DIAPOSITIVA 5: Esquema -->
+            <div class="slide flex-col items-center justify-center" id="slide-4">
+                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-16">El Ciclo Didáctico</h2>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 w-full mb-16 px-4">
+                    <!-- Paso 1 -->
+                    <div class="animate-item delay-2 relative flex flex-col items-center px-1">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
+                            <span class="text-xl md:text-2xl font-black text-blue-600">1</span>
+                        </div>
+                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Observación</h4>
+                        <p class="text-sm text-slate-500">Psicológica</p>
+                    </div>
+                    
+                    <div class="animate-item delay-2 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
+                    
+                    <!-- Paso 2 -->
+                    <div class="animate-item delay-3 relative flex flex-col items-center px-1">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
+                            <span class="text-xl md:text-2xl font-black text-emerald-600">2</span>
+                        </div>
+                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Diagnóstico</h4>
+                        <p class="text-sm text-slate-500">Del "Ingenio"</p>
+                    </div>
+                    
+                    <div class="animate-item delay-3 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
+                    
+                    <!-- Paso 3 -->
+                    <div class="animate-item delay-4 relative flex flex-col items-center px-1">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-purple-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
+                            <span class="text-xl md:text-2xl font-black text-purple-600">3</span>
+                        </div>
+                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Adaptación</h4>
+                        <p class="text-sm text-slate-500">Del Método</p>
+                    </div>
+
+                    <div class="animate-item delay-4 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
+                    
+                    <!-- Paso 4 -->
+                    <div class="animate-item delay-5 relative flex flex-col items-center px-1">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-amber-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
+                            <span class="text-xl md:text-2xl font-black text-amber-600">4</span>
+                        </div>
+                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Seguimiento</h4>
+                        <p class="text-sm text-slate-500">Paciencia y Eval.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta interactiva -->
+                <div class="animate-item delay-6 pulse-slow bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl shadow-xl w-full max-w-2xl text-center transform hover:scale-105 transition-all cursor-pointer">
+                    <p class="text-2xl md:text-3xl font-bold text-white tracking-wide flex items-center justify-center">
+                        <i data-lucide="mic" class="mr-3"></i>
+                        "¿Y cómo aprendes mejor tú?"
+                    </p>
+                </div>
             </div>
+
+            <!-- DIAPOSITIVA 6: Cierre (ACTUALIZADA) -->
+            <div class="slide flex-col items-center justify-center px-8" id="slide-5">
+                <div class="animate-item delay-1 flex items-center justify-center mb-8">
+                    <div class="h-[1px] w-16 bg-slate-300"></div>
+                    <h2 class="text-3xl font-bold text-slate-400 uppercase tracking-widest mx-6">El Legado de Vives</h2>
+                    <div class="h-[1px] w-16 bg-slate-300"></div>
+                </div>
+                
+                <div class="animate-item delay-2 relative max-w-4xl text-center bg-white p-10 md:p-12 rounded-3xl shadow-xl border border-slate-100 mb-6">
+                    <i data-lucide="quote" class="absolute -top-6 -left-6 text-blue-500 opacity-20 w-24 h-24"></i>
+                    
+                    <p class="text-2xl md:text-4xl font-medium text-slate-700 leading-tight relative z-10 mb-6">
+                        "La enseñanza debe <span class="text-blue-600 font-extrabold bg-blue-50 px-2 rounded">adaptarse</span> a las características del alumno..."
+                    </p>
+                    
+                    <div class="h-px w-3/4 bg-slate-200 mx-auto my-6"></div>
+                    
+                    <p class="text-xl md:text-3xl font-medium text-slate-600 leading-tight relative z-10">
+                        "...y el estudiante también debe <span class="text-emerald-600 font-extrabold bg-emerald-50 px-2 rounded">adecuarse</span> con disciplina a las exigencias de su formación."
+                    </p>
+                    
+                    <i data-lucide="quote" class="absolute -bottom-6 -right-6 text-indigo-500 opacity-20 w-24 h-24 transform rotate-180"></i>
+                </div>
+
+                <div class="animate-item delay-3 flex items-center text-slate-500 font-medium mt-4">
+                    <i data-lucide="check-circle" class="mr-2 text-emerald-500"></i> Fin de la Microclase
+                </div>
+            </div>
+
         </div>
 
+        <!-- Controles Inferiores (Fijos) -->
+        <div class="h-20 bg-white border-t border-slate-200 px-8 flex justify-between items-center text-slate-600 shadow-[0_-5px_15px_rgba(0,0,0,0.02)] z-50 relative">
+            <button id="btn-prev" class="group flex items-center px-5 py-2.5 rounded-xl font-bold transition-all hover:bg-slate-100 hover:text-blue-600 opacity-30 cursor-not-allowed border border-transparent hover:border-slate-200">
+                <i data-lucide="arrow-left" class="mr-2 transform group-hover:-translate-x-1 transition-transform"></i> Atrás
+            </button>
+            
+            <span id="slide-counter" class="font-bold text-sm bg-slate-100 px-4 py-1.5 rounded-full text-slate-500">
+                1 / 6
+            </span>
+            
+            <button id="btn-next" class="group flex items-center px-5 py-2.5 rounded-xl font-bold transition-all hover:bg-blue-50 hover:text-blue-600 border border-transparent hover:border-blue-100">
+                Siguiente <i data-lucide="arrow-right" class="ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
+        
     </div>
 
-    <!-- Controles -->
-    <div id="controls">
-        <button id="btn-prev" onclick="prevSlide()" disabled><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-        <span id="slide-counter">1 / 10</span>
-        <button id="btn-next" onclick="nextSlide()">Siguiente <i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-
+    <!-- Script de Lógica -->
     <script>
-        // Lógica de navegación en JavaScript
-        let currentSlideIndex = 0;
+        // Inicializar los íconos de Lucide
+        lucide.createIcons();
+
+        // Variables
+        let currentSlide = 0;
+        const totalSlides = 6;
         const slides = document.querySelectorAll('.slide');
-        const counter = document.getElementById('slide-counter');
         const btnPrev = document.getElementById('btn-prev');
         const btnNext = document.getElementById('btn-next');
+        const counter = document.getElementById('slide-counter');
+        const progressBar = document.getElementById('progress-bar');
 
-        function updateSlides() {
-            // Actualizar clases de las diapositivas
+        // Función para cambiar la diapositiva con efecto de dirección
+        function updateSlider(direction) {
             slides.forEach((slide, index) => {
-                slide.classList.remove('active');
-                if (index === currentSlideIndex) {
+                // Removemos las clases previas
+                slide.classList.remove('active', 'previous');
+                
+                // Aplicamos la dirección del movimiento para el CSS
+                if (index < currentSlide) {
+                    slide.classList.add('previous');
+                } else if (index === currentSlide) {
                     slide.classList.add('active');
                 }
             });
 
-            // Actualizar el contador
-            counter.innerText = `${currentSlideIndex + 1} / ${slides.length}`;
+            // Actualizar contador y barra
+            counter.innerText = `${currentSlide + 1} / ${totalSlides}`;
+            progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
 
-            // Habilitar/deshabilitar botones
-            btnPrev.disabled = currentSlideIndex === 0;
-            btnNext.disabled = currentSlideIndex === slides.length - 1;
-        }
+            // Control de Botones
+            if (currentSlide === 0) {
+                btnPrev.classList.add('opacity-30', 'cursor-not-allowed');
+                btnPrev.classList.remove('hover:bg-slate-100', 'hover:text-blue-600');
+            } else {
+                btnPrev.classList.remove('opacity-30', 'cursor-not-allowed');
+                btnPrev.classList.add('hover:bg-slate-100', 'hover:text-blue-600');
+            }
 
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                currentSlideIndex++;
-                updateSlides();
+            if (currentSlide === totalSlides - 1) {
+                btnNext.classList.add('opacity-30', 'cursor-not-allowed');
+                btnNext.classList.remove('hover:bg-blue-50', 'hover:text-blue-600');
+            } else {
+                btnNext.classList.remove('opacity-30', 'cursor-not-allowed');
+                btnNext.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
             }
         }
 
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-                updateSlides();
-            }
-        }
-
-        // Permitir navegación con las flechas del teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'Space') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
+        // Eventos Clic
+        btnNext.addEventListener('click', () => {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlider('next');
             }
         });
 
-        // Inicializar
-        updateSlides();
+        btnPrev.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlider('prev');
+            }
+        });
+
+        // Eventos Teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                if (currentSlide < totalSlides - 1) { currentSlide++; updateSlider('next'); }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 0) { currentSlide--; updateSlider('prev'); }
+            }
+        });
     </script>
 </body>
 </html>
-```
