@@ -1,422 +1,613 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<!DOCTYPE html><html lang="es"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microclase Dinámica: Juan Luis Vives</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Íconos Lucide -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Sesiones: Time Travel y Arcos Argumentales</title>
+    <!-- Google Fonts for Cinematic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        /* Fondo animado */
-        .bg-animated {
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #334155);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* 1. THE SETUP & GLOBAL STYLES */
+        * {
+            box-sizing: border-box;
         }
 
-        /* Contenedor de diapositivas relativo para apilarlas */
-        #slide-container {
+        body {
+            background-color: #1e1e24; /* Outer dark gray */
+            display: grid;
+            gap: 20px;
+            place-items: center;
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        p {
+            margin: 0;
+            margin-bottom: 15px;
+        }
+
+        /* Standard Slide Container Rules - Cinematic Theme */
+        .slide-container {
+            background-color: #09090b; /* Zinc 950 - Deepest Black */
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            height: 720px;
+            justify-content: center;
+            overflow: hidden;
+            padding: 60px;
             position: relative;
+            width: 1280px;
         }
 
-        /* Transiciones de las Diapositivas */
-        .slide {
+        /* Subtle grid background for tech/time feel */
+        .slide-container::before {
+            content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateX(40px) scale(0.95);
-            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .slide.active {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateX(0) scale(1);
-            z-index: 10;
-        }
-        .slide.previous {
-            transform: translateX(-40px) scale(0.95);
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            opacity: 0.5;
         }
 
-        /* Animaciones en cascada para los elementos internos (Staggering) */
-        .slide .animate-item {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease-out;
+        .slide-container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 2. CONSISTENT TYPOGRAPHY */
+        .slide-container h1, .slide-container h2, .slide-container h3 {
+            color: #f8fafc;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        .slide-container h1 {
+            font-size: 65px;
+            line-height: 1.1;
         }
         
-        .slide.active .animate-item {
-            opacity: 1;
-            transform: translateY(0);
+        .slide-container h1 span, .slide-container h2 span {
+            color: #e11d48; /* Cinematic Rose/Red Accent */
         }
 
-        /* Retrasos escalonados */
-        .slide.active .delay-1 { transition-delay: 0.1s; }
-        .slide.active .delay-2 { transition-delay: 0.3s; }
-        .slide.active .delay-3 { transition-delay: 0.4s; }
-        .slide.active .delay-4 { transition-delay: 0.5s; }
-        .slide.active .delay-5 { transition-delay: 0.6s; }
-        .slide.active .delay-6 { transition-delay: 0.7s; }
-
-        /* Efecto de pulso continuo */
-        .pulse-slow {
-            animation: pulse-shadow 2s infinite;
+        .slide-container .slide-title {
+            font-size: 45px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: left;
+            width: 100%;
         }
-        @keyframes pulse-shadow {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+
+        .slide-container h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #0ea5e9; /* Sky Blue Accent for Time Travel */
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .slide-container p, .slide-container li, .slide-container .subtitle {
+            color: #cbd5e1; /* Slate 300 */
+            font-size: 20px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .slide-container .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin: 25px auto 0;
+            font-weight: 500;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        /* 3. LAYOUT DEFINITIONS */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Title Slide */
+        .title-layout {
+            text-align: center;
+        }
+
+        /* Section Title Slide */
+        .section-title-layout {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            width: 100%;
+        }
+
+        .section-title-layout h2 {
+            font-size: 75px;
+            margin-bottom: 20px;
+        }
+
+        .section-title-layout p {
+            font-size: 30px;
+            color: #0ea5e9;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title-layout hr {
+            border: none;
+            height: 6px;
+            background: #e11d48;
+            width: 150px;
+            margin: 35px auto;
+        }
+
+        /* Generic Two Column */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            width: 100%;
+            align-items: center;
+        }
+
+        /* Tiled Two Column */
+        .two-column.tiled {
+            align-items: stretch;
+        }
+        .two-column.tiled > div {
+            background-color: #18181b; /* Zinc 900 */
+            border-radius: 12px;
+            border-left: 4px solid #0ea5e9;
+            padding: 40px;
+        }
+
+        /* Image Formatting for Image_Right_Text_Left */
+        .image-wrapper {
+            border-radius: 12px;
+            height: 420px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #27272a;
+        }
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Tiled Layout with Icons */
+        .tiled-content {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+            align-items: stretch;
+        }
+        .tile {
+            background-color: #18181b;
+            border-radius: 12px;
+            border-top: 4px solid #e11d48;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 40px 30px;
+            text-align: left;
+        }
+        .tile .icon {
+            color: #e11d48;
+            font-size: 45px;
+            margin-bottom: 20px;
+        }
+        
+        /* Tiled Images Layout */
+        .image-tile {
+            flex: 1;
+            text-align: left;
+            background-color: #18181b;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .image-tile .image-wrapper {
+            height: 220px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+        }
+        .image-tile .image-wrapper img {
+            object-fit: cover;
+        }
+        .image-tile p {
+            font-size: 16px;
+            margin: 0;
+            color: #94a3b8;
+        }
+
+        /* Styled Bullet Points */
+        .bullet-list {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .bullet-list ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .bullet-list li {
+            margin-bottom: 25px;
+            padding-left: 55px;
+            position: relative;
+            font-size: 22px;
+        }
+        .bullet-list i {
+            font-size: 28px;
+            left: 0;
+            margin-top: 2px;
+            position: absolute;
+        }
+        .bullet-list li strong {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        /* Highlighted Numbers */
+        .highlight-numbers-layout > div:first-child {
+            flex: 0 0 35%;
+            text-align: center;
+            border-right: 2px solid #27272a;
+            padding-right: 30px;
+        }
+        .highlight-numbers-layout .number {
+            color: #e11d48;
+            font-size: 160px;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .highlight-numbers-layout .number-label {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0ea5e9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Full Background Image */
+        .full-bg-image {
+            background-position: center;
+            background-size: cover;
+        }
+        .full-bg-image .content-overlay {
+            text-align: center;
+            background: rgba(9, 9, 11, 0.85); /* Dark overlay */
+            padding: 50px;
+            border-radius: 12px;
+            border: 1px solid #27272a;
+            max-width: 900px;
+        }
+        .full-bg-image h2 {
+            font-size: 55px;
+            margin-bottom: 20px;
+        }
+        .full-bg-image p {
+            font-size: 24px;
+            color: #cbd5e1;
+        }
+
+        /* Bleed Image Layout */
+        .slide-container.bleed-image-layout {
+            align-items: start;
+            display: grid;
+            gap: 50px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 0;
+        }
+        .slide-container.bleed-image-layout > .content-container {
+            padding: 80px 0 80px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        .slide-container.bleed-image-layout > .image-container {
+            height: 100%;
+            overflow: hidden;
+            width: 100%;
+        }
+        .slide-container.bleed-image-layout img.bleed-image-side {
+            display: block;
+            height: 720px;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+        }
+        .slide-container.bleed-image-layout .bleed-text-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Quote box style */
+        .scripture-box {
+            background-color: rgba(14, 165, 233, 0.1);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px 30px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .scripture-box p {
+            font-style: italic;
+            color: #0ea5e9;
+            margin: 0;
+        }
+        
+        /* QA Layout */
+        .qa-layout {
+            text-align: center;
+            width: 100%;
+        }
+        .qa-layout h2 {
+            font-size: 90px;
+            color: #e11d48;
+            margin-bottom: 20px;
         }
     </style>
 </head>
-<body class="bg-animated min-h-screen flex items-center justify-center p-4 md:p-8 font-sans">
+<body>
 
-    <!-- Presentación -->
-    <div class="bg-slate-50 w-full max-w-6xl h-[650px] rounded-2xl shadow-2xl relative flex flex-col overflow-hidden transition-all">
-        
-        <!-- Barra de Progreso -->
-        <div class="h-2 w-full bg-slate-200">
-            <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(37,99,235,0.8)]" style="width: 16.66%;"></div>
-        </div>
-
-        <!-- Área de las Diapositivas -->
-        <div id="slide-container" class="flex-grow p-10 md:p-16">
-            
-            <!-- DIAPOSITIVA 1: Portada -->
-            <div class="slide flex-col items-center justify-center text-center active" id="slide-0">
-                <div class="animate-item delay-1 w-48 h-60 md:w-56 md:h-72 bg-slate-200 border-4 border-slate-400 rounded-xl shadow-xl flex items-center justify-center overflow-hidden mb-6 transform hover:scale-105 transition-transform">
-                    <img src="data:image/jpeg;base64,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" alt="[Retrato de Juan Luis Vives]" class="w-full h-full object-cover object-top" />
-                </div>
-                <h1 class="animate-item delay-2 text-4xl md:text-6xl font-bold text-slate-800 leading-tight mb-4">
-                    Juan Luis Vives y la educación <br/>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">centrada en el estudiante</span>
-                </h1>
-                <div class="animate-item delay-3 w-32 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mx-auto my-6"></div>
-                <h2 class="animate-item delay-4 text-2xl text-slate-600 font-light flex items-center justify-center">
-                    <i data-lucide="graduation-cap" class="mr-3 w-8 h-8 text-indigo-500"></i>
-                    Microclase de Historia de la Educación
-                </h2>
-            </div>
-
-            <!-- DIAPOSITIVA 2: Planteamiento (DINÁMICA) -->
-            <div class="slide flex-col items-center justify-center" id="slide-1">
-                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-8 uppercase tracking-wide text-blue-600">Experimento Sensorial</h2>
-                
-                <div class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-6 md:space-y-0 w-full mb-8">
-                    <!-- Observar (Imagen) -->
-                    <div class="animate-item delay-3 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
-                        <span class="text-lg font-bold text-slate-500 mb-4">1. Observar</span>
-                        <div class="bg-indigo-50 p-4 rounded-full mb-2">
-                                              <img src="data:image/png;base64,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" />  
-                        </div>
-                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Observar atentamente..."</p>
-                    </div>
-
-                    
-                    <!-- Escuchar (Palabras) -->
-                    <div class="animate-item delay-3 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
-                        <span class="text-lg font-bold text-slate-500 mb-4">2. Escuchar</span>
-                        <div class="bg-indigo-50 p-4 rounded-full mb-2">
-                            <i data-lucide="ear" class="text-indigo-600 w-12 h-12"></i>
-                        </div>
-                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Atentos a las 5 palabras..."</p>
-                    </div>
-
-                    <!-- Experimentar (Tocar) -->
-                    <div class="animate-item delay-4 group flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 w-72 h-56 justify-center">
-                        <span class="text-lg font-bold text-slate-500 mb-4">3. Experimentar</span>
-                        <div class="bg-amber-50 p-4 rounded-full mb-2">
-                            <i data-lucide="hand" class="text-amber-600 w-12 h-12"></i>
-                        </div>
-                        <p class="text-sm text-slate-400 mt-2 text-center italic">"Analizando el objeto físico"</p>
-                    </div>
-                </div>
-
-                <div class="animate-item delay-5 mt-2 p-4 bg-slate-800 rounded-xl border border-slate-700 max-w-4xl text-center shadow-lg">
-                    <p class="text-xl font-medium text-white flex items-center justify-center">
-                        <i data-lucide="lightbulb" class="mr-3 text-yellow-400"></i>
-                        Aunque todos recibimos la misma información, cada persona aprende y recuerda de manera diferente.
-                    </p>
-                </div>
-            </div>
-
-            <!-- DIAPOSITIVA 3: Quiebre Histórico -->
-            <div class="slide flex-col justify-center" id="slide-2">
-                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-10">Una Evolución, No un Divorcio</h2>
-                
-                <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8 h-[350px]">
-                    <!-- Columna Izquierda -->
-                    <div class="animate-item delay-2 flex-1 bg-gradient-to-b from-slate-100 to-white border-t-8 border-slate-400 rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
-                        <div class="flex items-center justify-center mb-6 border-b border-slate-200 pb-4">
-                            <i data-lucide="landmark" class="text-slate-500 w-8 h-8 mr-3"></i>
-                            <h3 class="text-2xl font-bold text-slate-700">Lo que se hacía (Escuela)</h3>
-                        </div>
-                        <ul class="space-y-4 text-lg text-slate-700">
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="book" class="text-slate-400 mr-3"></i> El Trívium (Gramática, Lógica, Retórica)</li>
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="swords" class="text-slate-400 mr-3"></i> Análisis y confrontaciones (debates)</li>
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-slate-200"><i data-lucide="gavel" class="text-slate-400 mr-3"></i> Fuerte autoridad impositiva del maestro</li>
-                        </ul>
-                    </div>
-
-                    <!-- Divisor -->
-                    <div class="hidden md:flex flex-col items-center justify-center animate-item delay-3">
-                        <div class="bg-blue-100 p-3 rounded-full">
-                            <i data-lucide="plus" class="text-blue-600 w-8 h-8"></i>
-                        </div>
-                    </div>
-
-                    <!-- Columna Derecha -->
-                    <div class="animate-item delay-4 flex-1 bg-gradient-to-b from-sky-50 to-white border-t-8 border-sky-500 rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
-                        <div class="flex items-center justify-center mb-6 border-b border-sky-200 pb-4">
-                            <i data-lucide="lightbulb" class="text-sky-500 w-8 h-8 mr-3"></i>
-                            <h3 class="text-2xl font-bold text-sky-800">Lo que insertó Vives</h3>
-                        </div>
-                        <ul class="space-y-4 text-lg text-sky-900">
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="heart" class="text-sky-500 mr-3"></i> Intereses y características del estudiante</li>
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="compass" class="text-sky-500 mr-3"></i> Maestro como guía (autoridad moderada)</li>
-                            <li class="flex items-center bg-white p-3 rounded-lg shadow-sm border border-sky-100"><i data-lucide="users" class="text-sky-500 mr-3"></i> Adaptación a los diferentes "Ingenios"</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DIAPOSITIVA 4: Pilares -->
-            <div class="slide flex-col justify-center" id="slide-3">
-                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-10">Los 4 Pilares de los <span class="text-indigo-600 bg-indigo-50 px-4 py-1 rounded-lg">"Ingenios"</span></h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
-                    <!-- Pilar 1 -->
-                    <div class="animate-item delay-2 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-300 transition-all cursor-default h-full">
-                        <div class="bg-blue-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
-                            <i data-lucide="search" class="text-blue-600 w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl text-slate-800 font-bold mb-1">Observación sistemática</h4>
-                            <p class="text-slate-500 text-md leading-tight">Analizar las características del aula antes de impartir el conocimiento.</p>
-                        </div>
-                    </div>
-
-                    <!-- Pilar 2 -->
-                    <div class="animate-item delay-3 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-300 transition-all cursor-default h-full">
-                        <div class="bg-emerald-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
-                            <i data-lucide="brain" class="text-emerald-600 w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl text-slate-800 font-bold mb-1">Maestro investigador</h4>
-                            <p class="text-slate-500 text-md leading-tight">Evaluar en conjunto las capacidades de los niños; un descubridor de mentes.</p>
-                        </div>
-                    </div>
-
-                    <!-- Pilar 3 -->
-                    <div class="animate-item delay-4 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-purple-300 transition-all cursor-default h-full">
-                        <div class="bg-purple-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
-                            <i data-lucide="puzzle" class="text-purple-600 w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl text-slate-800 font-bold mb-1">Adaptación educativa</h4>
-                            <p class="text-slate-500 text-md leading-tight">Acomodar el método a los intereses del estudiante, evitando la rigidez.</p>
-                        </div>
-                    </div>
-
-                    <!-- Pilar 4 -->
-                    <div class="animate-item delay-5 group flex items-start p-5 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-amber-300 transition-all cursor-default h-full">
-                        <div class="bg-amber-100 p-4 rounded-full mr-5 group-hover:scale-110 transition-transform flex-shrink-0">
-                            <i data-lucide="clock" class="text-amber-600 w-8 h-8"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl text-slate-800 font-bold mb-1">Paciencia diagnóstica</h4>
-                            <p class="text-slate-500 text-md leading-tight">Respetar los tiempos de maduración de cada niño sin desesperarse.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DIAPOSITIVA 5: Esquema -->
-            <div class="slide flex-col items-center justify-center" id="slide-4">
-                <h2 class="animate-item delay-1 text-4xl font-bold text-slate-800 text-center mb-16">El Ciclo Didáctico</h2>
-                
-                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 w-full mb-16 px-4">
-                    <!-- Paso 1 -->
-                    <div class="animate-item delay-2 relative flex flex-col items-center px-1">
-                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
-                            <span class="text-xl md:text-2xl font-black text-blue-600">1</span>
-                        </div>
-                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Observación</h4>
-                        <p class="text-sm text-slate-500">Psicológica</p>
-                    </div>
-                    
-                    <div class="animate-item delay-2 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
-                    
-                    <!-- Paso 2 -->
-                    <div class="animate-item delay-3 relative flex flex-col items-center px-1">
-                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
-                            <span class="text-xl md:text-2xl font-black text-emerald-600">2</span>
-                        </div>
-                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Diagnóstico</h4>
-                        <p class="text-sm text-slate-500">Del "Ingenio"</p>
-                    </div>
-                    
-                    <div class="animate-item delay-3 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
-                    
-                    <!-- Paso 3 -->
-                    <div class="animate-item delay-4 relative flex flex-col items-center px-1">
-                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-purple-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
-                            <span class="text-xl md:text-2xl font-black text-purple-600">3</span>
-                        </div>
-                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Adaptación</h4>
-                        <p class="text-sm text-slate-500">Del Método</p>
-                    </div>
-
-                    <div class="animate-item delay-4 hidden md:block w-8 md:w-12 h-1 bg-slate-200 -mt-10 mx-1"></div>
-                    
-                    <!-- Paso 4 -->
-                    <div class="animate-item delay-5 relative flex flex-col items-center px-1">
-                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-amber-100 flex items-center justify-center mb-4 z-10 border-4 border-white shadow-lg">
-                            <span class="text-xl md:text-2xl font-black text-amber-600">4</span>
-                        </div>
-                        <h4 class="text-lg md:text-xl font-bold text-slate-700">Seguimiento</h4>
-                        <p class="text-sm text-slate-500">Paciencia y Eval.</p>
-                    </div>
-                </div>
-
-                <!-- Pregunta interactiva -->
-                <div class="animate-item delay-6 pulse-slow bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl shadow-xl w-full max-w-2xl text-center transform hover:scale-105 transition-all cursor-pointer">
-                    <p class="text-2xl md:text-3xl font-bold text-white tracking-wide flex items-center justify-center">
-                        <i data-lucide="mic" class="mr-3"></i>
-                        "¿Y cómo aprendes mejor tú?"
-                    </p>
-                </div>
-            </div>
-
-            <!-- DIAPOSITIVA 6: Cierre (ACTUALIZADA) -->
-            <div class="slide flex-col items-center justify-center px-8" id="slide-5">
-                <div class="animate-item delay-1 flex items-center justify-center mb-8">
-                    <div class="h-[1px] w-16 bg-slate-300"></div>
-                    <h2 class="text-3xl font-bold text-slate-400 uppercase tracking-widest mx-6">El Legado de Vives</h2>
-                    <div class="h-[1px] w-16 bg-slate-300"></div>
-                </div>
-                
-                <div class="animate-item delay-2 relative max-w-4xl text-center bg-white p-10 md:p-12 rounded-3xl shadow-xl border border-slate-100 mb-6">
-                    <i data-lucide="quote" class="absolute -top-6 -left-6 text-blue-500 opacity-20 w-24 h-24"></i>
-                    
-                    <p class="text-2xl md:text-4xl font-medium text-slate-700 leading-tight relative z-10 mb-6">
-                        "La enseñanza debe <span class="text-blue-600 font-extrabold bg-blue-50 px-2 rounded">adaptarse</span> a las características del alumno..."
-                    </p>
-                    
-                    <div class="h-px w-3/4 bg-slate-200 mx-auto my-6"></div>
-                    
-                    <p class="text-xl md:text-3xl font-medium text-slate-600 leading-tight relative z-10">
-                        "...y el estudiante también debe <span class="text-emerald-600 font-extrabold bg-emerald-50 px-2 rounded">adecuarse</span> con disciplina a las exigencias de su formación."
-                    </p>
-                    
-                    <i data-lucide="quote" class="absolute -bottom-6 -right-6 text-indigo-500 opacity-20 w-24 h-24 transform rotate-180"></i>
-                </div>
-
-                <div class="animate-item delay-3 flex items-center text-slate-500 font-medium mt-4">
-                    <i data-lucide="check-circle" class="mr-2 text-emerald-500"></i> Fin de la Microclase
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Controles Inferiores (Fijos) -->
-        <div class="h-20 bg-white border-t border-slate-200 px-8 flex justify-between items-center text-slate-600 shadow-[0_-5px_15px_rgba(0,0,0,0.02)] z-50 relative">
-            <button id="btn-prev" class="group flex items-center px-5 py-2.5 rounded-xl font-bold transition-all hover:bg-slate-100 hover:text-blue-600 opacity-30 cursor-not-allowed border border-transparent hover:border-slate-200">
-                <i data-lucide="arrow-left" class="mr-2 transform group-hover:-translate-x-1 transition-transform"></i> Atrás
-            </button>
-            
-            <span id="slide-counter" class="font-bold text-sm bg-slate-100 px-4 py-1.5 rounded-full text-slate-500">
-                1 / 6
-            </span>
-            
-            <button id="btn-next" class="group flex items-center px-5 py-2.5 rounded-xl font-bold transition-all hover:bg-blue-50 hover:text-blue-600 border border-transparent hover:border-blue-100">
-                Siguiente <i data-lucide="arrow-right" class="ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-            </button>
-        </div>
-        
+<!-- Slide 1: Title_Slide -->
+<div class="slide-container" id="slide1">
+    <div class="title-layout">
+        <h1>2 Propuestas Épicas para el <span>Año Litúrgico</span></h1>
+        <p class="subtitle">Propuesta 1: Time Travel ⏳ | Propuesta 2: Arcos Argumentales 🎬</p>
     </div>
+</div>
 
-    <!-- Script de Lógica -->
-    <script>
-        // Inicializar los íconos de Lucide
-        lucide.createIcons();
+<!-- Slide 2: Section_Title (Propuesta 1) -->
+<div class="slide-container" id="slide2">
+    <div class="section-title-layout">
+        <h2>Propuesta 1: El <span>"Time Travel"</span></h2>
+        <hr>
+        <p>El ritmo de la vida y la máquina del tiempo</p>
+    </div>
+</div>
 
-        // Variables
-        let currentSlide = 0;
-        const totalSlides = 6;
-        const slides = document.querySelectorAll('.slide');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-        const counter = document.getElementById('slide-counter');
-        const progressBar = document.getElementById('progress-bar');
+<!-- Slide 3: Tiled_Text_With_Icons -->
+<div class="slide-container" id="slide3">
+    <h2 class="slide-title">El Gancho: <span>El Dress Code</span> y la Vida</h2>
+    <div class="content-area">
+        <p>¿Qué código de vestimenta usarías para una boda espectacular vs. un día normal de clases? La Iglesia usa la mejor psicología humana: <strong>no podemos estar siempre de fiesta, ni siempre tristes.</strong></p>
+        
+        <div class="scripture-box">
+            <p>"Todo tiene su momento... tiempo de llorar y tiempo de reír, tiempo de hacer duelo y tiempo de bailar. [...] Dios hizo todo hermoso en su tiempo." (Eclesiastés 3, 1-4. 11)</p>
+        </div>
 
-        // Función para cambiar la diapositiva con efecto de dirección
-        function updateSlider(direction) {
-            slides.forEach((slide, index) => {
-                // Removemos las clases previas
-                slide.classList.remove('active', 'previous');
-                
-                // Aplicamos la dirección del movimiento para el CSS
-                if (index < currentSlide) {
-                    slide.classList.add('previous');
-                } else if (index === currentSlide) {
-                    slide.classList.add('active');
-                }
-            });
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon" style="color: #0ea5e9;"><i class="fa-solid fa-masks-theater"></i></div>
+                <h3>El Ritmo Natural</h3>
+                <p>La liturgia obedece al ritmo humano que Dios creó. Es un diseño pedagógico para educar emociones.</p>
+            </div>
+            <div class="tile">
+                <div class="icon" style="color: #e11d48;"><i class="fa-solid fa-palette"></i></div>
+                <h3>Los 5 Colores</h3>
+                <p>Blanco, Morado, Verde, Rojo, Rosa. Cada color nos conecta con Dios en una etapa distinta.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-            // Actualizar contador y barra
-            counter.innerText = `${currentSlide + 1} / ${totalSlides}`;
-            progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+<!-- Slide 4: Image_Right_Text_Left -->
+<div class="slide-container" id="slide4">
+    <h2 class="slide-title">Iluminación: <span>Chronos</span> vs. <span>Kairos</span></h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <p><strong>Chronos:</strong> El tiempo del reloj, la rutina. El que te estresa, te envejece y se gasta ("cronómetro").</p>
+                <p><strong>Kairos:</strong> El tiempo de Dios, el momento de salvación.</p>
+                <div class="scripture-box">
+                    <p>"Pues cada vez que comen de este pan... anuncian la muerte del Señor hasta que él venga." (1 Corintios 11, 26)</p>
+                </div>
+                <p>Cuando la Iglesia celebra, no "recuerda" como una foto vieja. Es una <strong>máquina del tiempo</strong> que hace el pasado real aquí y ahora.</p>
+            </div>
+            <div>
+                <div class="image-wrapper">
+                    <img alt="Concepto luminoso de Chronos y Kairos" src="https://mysteryinhistory.com/wp-content/uploads/Chronos-Personified-With-Hourglass-And-Scythe-Amidst-Cosmic-Background.webp">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            // Control de Botones
-            if (currentSlide === 0) {
-                btnPrev.classList.add('opacity-30', 'cursor-not-allowed');
-                btnPrev.classList.remove('hover:bg-slate-100', 'hover:text-blue-600');
-            } else {
-                btnPrev.classList.remove('opacity-30', 'cursor-not-allowed');
-                btnPrev.classList.add('hover:bg-slate-100', 'hover:text-blue-600');
-            }
+<!-- Slide 5: Two_Column_Tiled_Text -->
+<div class="slide-container" id="slide5">
+    <h2 class="slide-title">El Origen: <span>El Estreno Semanal</span></h2>
+    <div class="content-area">
+        <div class="scripture-box" style="margin-top:0;">
+            <p>"El primer día de la semana, estando nosotros reunidos para partir el pan, Pablo... conversaba con ellos..." (Hechos 20, 7)</p>
+        </div>
+        <div class="two-column tiled">
+            <div>
+                <h3 style="color: #e11d48;">¿La primera fiesta?</h3>
+                <p>¡No fue Navidad! Fue el <strong>Domingo</strong>. El "primer día" judío fue el día en que Jesús resucitó. Cambiaron su día de descanso por este motivo central.</p>
+            </div>
+            <div>
+                <h3 style="color: #e11d48;">El Centro de Todo</h3>
+                <p>Ninguna devoción privada es más importante que la comunidad reunida el Domingo partiendo el Pan. Es el corazón del Año Litúrgico.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-            if (currentSlide === totalSlides - 1) {
-                btnNext.classList.add('opacity-30', 'cursor-not-allowed');
-                btnNext.classList.remove('hover:bg-blue-50', 'hover:text-blue-600');
-            } else {
-                btnNext.classList.remove('opacity-30', 'cursor-not-allowed');
-                btnNext.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
-            }
-        }
+<!-- Slide 6: Styled_Bullet_Points -->
+<div class="slide-container" id="slide6">
+    <h2 class="slide-title">Decodificando los <span>Colores Litúrgicos</span></h2>
+    <div class="content-area">
+        <div class="bullet-list">
+            <ul>
+                <li><i class="fa-solid fa-circle" style="color: #ffffff;"></i> <strong>Blanco:</strong> Tiempo de reír (Alegría, luz, triunfo. Navidad y Pascua).</li>
+                <li><i class="fa-solid fa-circle" style="color: #a855f7;"></i> <strong>Morado:</strong> Tiempo de hacer duelo (Conversión, preparación. Adviento y Cuaresma).</li>
+                <li><i class="fa-solid fa-circle" style="color: #22c55e;"></i> <strong>Verde:</strong> Tiempo de plantar (Esperanza, crecimiento constante. Tiempo Ordinario).</li>
+                <li><i class="fa-solid fa-circle" style="color: #ef4444;"></i> <strong>Rojo:</strong> Fuego del Espíritu, amor supremo, sangre de mártires.</li>
+                <li><i class="fa-solid fa-circle" style="color: #f472b6;"></i> <strong>Rosa:</strong> Alegría en medio de la penitencia para "dar un respiro".</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-        // Eventos Clic
-        btnNext.addEventListener('click', () => {
-            if (currentSlide < totalSlides - 1) {
-                currentSlide++;
-                updateSlider('next');
-            }
-        });
+<!-- Slide 7: Highlighted_Numbers -->
+<div class="slide-container" id="slide7">
+    <h2 class="slide-title">Compromiso: <span>Sincronizar el Reloj</span></h2>
+    <div class="content-area">
+        <div class="two-column highlight-numbers-layout">
+            <div>
+                <div class="number">3</div>
+                <div class="number-label">Signos</div>
+            </div>
+            <div>
+                <h3 style="color: #e11d48;">Misión: Detectives Visuales</h3>
+                <p style="margin-bottom: 25px;">Esta semana, el reto es ir a la Misa dominical e identificar:</p>
+                <ul style="color: #cbd5e1; font-size: 22px; line-height: 1.5; padding-left: 25px;">
+                    <li style="margin-bottom: 10px;">¿De qué color está vestido el sacerdote?</li>
+                    <li style="margin-bottom: 10px;">¿El ambiente del templo es de fiesta o de reflexión silenciosa?</li>
+                    <li>¿De qué tiempo litúrgico hablan las lecturas?</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
-        btnPrev.addEventListener('click', () => {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateSlider('prev');
-            }
-        });
+<!-- Slide 8: Section_Title (Propuesta 2) -->
+<div class="slide-container" id="slide8">
+    <div class="section-title-layout">
+        <h2>Propuesta 2: Los <span>Arcos Argumentales</span></h2>
+        <hr>
+        <p>La Historia más épica jamás contada</p>
+    </div>
+</div>
 
-        // Eventos Teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'Space') {
-                if (currentSlide < totalSlides - 1) { currentSlide++; updateSlider('next'); }
-            } else if (e.key === 'ArrowLeft') {
-                if (currentSlide > 0) { currentSlide--; updateSlider('prev'); }
-            }
-        });
-    </script>
+<!-- Slide 9: Tiled_Images -->
+<div class="slide-container" id="slide9">
+    <h2 class="slide-title">El Gancho: <span>Temporadas</span> y <span>Arcos</span></h2>
+    <div class="content-area">
+        <p style="margin-bottom: 30px;">Si el protagonista peleara contra el jefe final en todos los episodios, sería agotador. Las buenas series tienen <strong>Arcos de Entrenamiento</strong> y <strong>Batallas Épicas</strong>. ¡La Iglesia Católica hace exactamente lo mismo!</p>
+        <div class="tiled-content">
+            <div class="image-tile">
+                <div class="image-wrapper"><img alt="Cine y clapperboard" src="https://png.pngtree.com/background/20230616/original/pngtree-cinema-concept-retro-movie-camera-clapper-board-and-reel-film-in-picture-image_3651752.jpg"></div>
+                <h3 style="color: #0ea5e9; font-size: 22px;">El Guion Original</h3>
+                <p>La Biblia nos muestra cómo los primeros cristianos dividieron la vida de Jesús en "Temporadas" para poder vivirla plenamente.</p>
+            </div>
+            <div class="image-tile">
+                <div class="image-wrapper"><img alt="Héroe épico observando el horizonte" src="https://images.stockcake.com/public/a/b/0/ab0d9f4e-2bfe-4a54-80d7-be987b15233d_large/hero-s-divine-light-stockcake.jpg"></div>
+                <h3 style="color: #e11d48; font-size: 22px;">Protagonistas</h3>
+                <p>No celebramos la resurrección todos los días igual. Necesitamos Arcos de Entrenamiento (Cuaresma) antes del Clímax.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Bleed_Image_Right -->
+<div class="slide-container bleed-image-layout" id="slide10">
+    <div class="content-container">
+        <h2 class="slide-title" style="margin-bottom: 20px;">Iluminación: El <span>Live Action</span></h2>
+        <div class="bleed-text-side">
+            <p>Ir a Misa no es ver un episodio grabado en VHS hace 2000 años; es una <strong>transmisión en vivo</strong>.</p>
+            <div class="scripture-box">
+                <p>"Anuncian la muerte del Señor hasta que él venga." (1 Corintios 11, 26)</p>
+            </div>
+            <p>La Eucaristía es el <strong>Live Action</strong> donde la victoria de Cristo se hace presente aquí y ahora.</p>
+        </div>
+    </div>
+    <div class="image-container">
+        <img class="bleed-image-side" alt="Eucaristía e iluminación cinematográfica" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbfibDi5bz2xlYA0-7w3ziNn7uVKIwkrkm0Ix8p8HxbRMC7cX2sZWnyHbN89lWYAPufwC0UFH23j5nSM6f5R2GJGE2AKz9dUlPGoxYhAKjsT54H4kIyB1P-5XUY_vByrlvgWftzQ/s1600/02+Benediction.JPG">
+    </div>
+</div>
+
+<!-- Slide 11: Image_Right_Text_Left -->
+<div class="slide-container" id="slide11">
+    <h2 class="slide-title">La <span>Paleta de Colores</span> del Director</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <p>Cualquier buen director cambia los colores de la pantalla según la emoción de la escena.</p>
+                <ul style="color:#cbd5e1; font-size: 20px; line-height: 1.6; padding-left: 20px;">
+                    <li><strong style="color:#a855f7;">Morado (Entrenamiento):</strong> Sudar espiritualmente para mejorar (Cuaresma).</li>
+                    <li><strong style="color:#ffffff;">Blanco (Clímax):</strong> La victoria y alegría máxima (Pascua).</li>
+                    <li><strong style="color:#22c55e;">Verde (Vida Cotidiana):</strong> Donde la fe crece con constancia en el día a día.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper">
+                    <img alt="Sacerdote con vestimentas litúrgicas" src="https://www.togetheratonealtar.catholic.edu.au/media/4hicu02g/207_objects.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Tiled_Text_With_Icons -->
+<div class="slide-container" id="slide12">
+    <h2 class="slide-title">Compromiso: ¿En qué <span>Temporada</span> estás?</h2>
+    <div class="content-area">
+        <p style="margin-bottom: 30px;">A veces tu vida personal no cuadra con el color de la Iglesia. ¡Y eso está bien!</p>
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon" style="color: #a855f7;"><i class="fa-solid fa-cloud-rain"></i></div>
+                <h3>Días Morados</h3>
+                <p>Si la Iglesia está de Verde pero tú estás en crisis (Morado), ofrécelo a Dios en Misa para que Él te ayude a pasar al Blanco.</p>
+            </div>
+            <div class="tile">
+                <div class="icon" style="color: #f8fafc;"><i class="fa-solid fa-sun"></i></div>
+                <h3>Días Blancos</h3>
+                <p>Si la Iglesia está de Morado pero tú rebosas alegría, da gracias a Dios por ese "episodio" de victoria en tu vida personal.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Full_Background_Image -->
+<div class="slide-container full-bg-image" id="slide13" style="background-image: url('https://dnm.nflximg.net/api/v6/BvVbc2Wxr2w6QuoANoSpJKEIWjQ/AAAAQYFGxEYupmdGzPw41VAIWmIVlqekhKM93WbUu7OYE6PSoUAe_0Gs52veIksM6VxvTwRNQEzrDLLpl9Re6Dt7MnLQ3mhwQhWk5kysMDybu6IiWhjaZgZdflvGzVWVZUp3_iGTRcDKiHZxEK8XxvJFsvNIxRU.jpg?r=b3a');">
+    <div class="content-overlay" style="margin: 0 auto;">
+        <h2>El Director de la <span>Historia</span></h2>
+        <p>"Señor, gracias por invitarnos a ser parte de tu historia. Ayúdanos a entender que cada 'temporada' tiene un propósito. Danos paciencia en nuestros días morados de preparación, constancia en nuestros días verdes de rutina, y un corazón agradecido para celebrar los días blancos de tu victoria. Amén."</p>
+    </div>
+</div>
+
+<!-- Slide 14: Q&A -->
+<div class="slide-container" id="slide14">
+    <div class="qa-layout">
+        <h2>¿Preguntas?</h2>
+        <p style="font-size: 28px; color: #cbd5e1; margin-bottom: 40px;">Es hora de vivir el tiempo como Kairos.</p>
+        <div class="scripture-box" style="display: inline-block; text-align: left;">
+            <p style="font-size: 22px;">"El tiempo deja de ser una línea vacía hacia la vejez; se convierte en un tiempo de salvación."</p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
