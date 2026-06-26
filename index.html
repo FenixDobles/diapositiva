@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        :root {
+            --zoom: 1;
+        }
+
         /* 1. THE SETUP & GLOBAL STYLES */
         * {
             box-sizing: border-box;
@@ -17,12 +21,14 @@
 
         body {
             background-color: #1e1e24; /* Outer dark gray */
-            display: grid;
-            gap: 20px;
-            place-items: center;
             margin: 0;
-            min-height: 100vh;
-            padding: 20px 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling in presentation mode */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         p {
@@ -42,8 +48,29 @@
             justify-content: center;
             overflow: hidden;
             padding: 60px;
-            position: relative;
+            position: absolute; /* Changed to absolute for stacking */
             width: 1280px;
+            
+            /* Presentation Transitions */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100px) scale(calc(var(--zoom) * 0.95));
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .slide-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0) scale(var(--zoom));
+            z-index: 10;
+        }
+
+        .slide-container.previous {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-100px) scale(calc(var(--zoom) * 0.95));
+            z-index: 1;
         }
 
         /* Subtle grid background for tech/time feel */
@@ -608,6 +635,75 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const slides = document.querySelectorAll('.slide-container');
+        let currentSlide = 0;
+
+        // Function to update the visible slide
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'previous');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('previous');
+                }
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                currentSlide = Math.min(currentSlide + 1, slides.length - 1);
+                updateSlides();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                currentSlide = Math.max(currentSlide - 1, 0);
+                updateSlides();
+            }
+        });
+
+        // Touch swipe navigation for mobile devices
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                // Swipe left -> Next slide
+                currentSlide = Math.min(currentSlide + 1, slides.length - 1);
+                updateSlides();
+            }
+            if (touchEndX > touchStartX + 50) {
+                // Swipe right -> Previous slide
+                currentSlide = Math.max(currentSlide - 1, 0);
+                updateSlides();
+            }
+        }
+
+        // Responsive scaling to fit the window perfectly
+        function resize() {
+            // Calculate scale based on standard 1280x720 size, with a small 5% margin
+            const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720) * 0.95;
+            document.documentElement.style.setProperty('--zoom', scale);
+        }
+
+        window.addEventListener('resize', resize);
+        
+        // Initial setup
+        resize();
+        updateSlides();
+    });
+</script>
 
 </body>
 </html>
